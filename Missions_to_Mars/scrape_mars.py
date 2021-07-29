@@ -138,4 +138,22 @@ def scrape_info():
             h+=1
     
     
-   
+    # Store data in a dictionary
+    mars_data = {
+       #News Title
+       "news_title": news_title,
+       #News Title
+       "news_p": news_p,
+       #Featured Image
+       "featured_image_url": featured_image_url,
+       #Mars Weather
+       "mars_weather": mars_weather,
+       #Mars Facts
+       "html_table":html_table,
+       #Mars Four Hemispheres
+       "hemisphere_image_urls":hemisphere_image_urls
+   }
+
+    browser.quit()
+    
+   return mars_data
