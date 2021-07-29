@@ -94,8 +94,8 @@ def scrape_info():
     x=0
     
     
-#    url = "https://galaxyfacts-mars.com/"
-    url = "https://galaxyfacts-mars.com/"    
+#    url = "https://marshemispheres.com/"
+    url = "https://marshemispheres.com/    
 #    xpath = ('//*[@id="product-section"]/div[2]/div[' + str(hemi) +']/div/a/h3')
    #X Path into the Four Hemisphere Images
     xpath = ('//*[@id="publish"]/div[1]/div[1]/div[4]/div/a[' + str(hemi) +']/div/h3')    
@@ -114,14 +114,11 @@ def scrape_info():
         time.sleep(2)
 
         # Scrape page into Soup
-        html = browser.html
-        soup = BeautifulSoup(html, "html.parser")
-        img_desc = soup.find('div', id="wide-image")
-        img_src = img_desc.find('div',class_='downloads')
-        image = img_src.find('a')
-        if image.has_attr('href'):
-            target_img = image.attrs['href']
-        img_url_list.append(target_img)
+       browser.find_by_css('a.product-item img')[i].click()
+        hemis_element = browser.links.find_by_text('Sample').first 
+        hemisphere_dic['image_url'] = hemis_element['href']
+        hemisphere_dic['hemisphere_title'] = browser.find_by_css('h2.title').text
+        image_urls.append(hemisphere_dic)
 
         hemi+=2
 
@@ -129,12 +126,12 @@ def scrape_info():
         count+=1
         x+=1
     
-    hemisphere_image_urls = []
+    image_urls = []
     h=0
     for items in title_list:
         if h < 4:
             dict = {"title": title_list[h], "img_url": img_url_list[h]}
-            hemisphere_image_urls.append(dict)
+            image_urls.append(dict)
             h+=1
     
     
@@ -146,12 +143,10 @@ def scrape_info():
        "news_p": news_p,
        #Featured Image
        "featured_image_url": featured_image_url,
-       #Mars Weather
-       "mars_weather": mars_weather,
        #Mars Facts
        "html_table":html_table,
        #Mars Four Hemispheres
-       "hemisphere_image_urls":hemisphere_image_urls
+       "image_urls":hemisphere_image_urls
    }
 
     browser.quit()
