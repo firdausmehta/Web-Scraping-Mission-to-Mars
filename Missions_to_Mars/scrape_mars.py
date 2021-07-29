@@ -36,13 +36,106 @@ def scrape_info():
     browser.visit(url1)
     time.sleep(1)
 
+    browser.find_by_tag('button')[1].click()
+    
     html = browser.html
     soup = BeautifulSoup(html, 'html.parser')
     
-    carousel_item =  soup.find('article', class_='carousel_item')
-    style = carousel_item["style"]
-    split_text = style.split("'")
-    featured_image_url = 'https://spaceimages-mars.com/image/featured/mars2.jpg' + split_text[1]
+    carousel_item =  soup.find('img', class_='fancybox-image')
+    split_text = src.split("'")
+    print(split_text[0])
+    featured_image_url = 'https://spaceimages-mars.com/' + split_text[0]
+    
+    """
+    Mars Fact Alternate
+    """
+    #Mars facts URL with Earth and Mars comparison
+    #url3 = 'http://space-facts.com/mars/'
+    #browser.visit(url3)
+    #time.sleep(1)
+
+    #tables = pd.read_html(url3)
+    #df = tables[0]
+    #df.columns = ["Parameter", "Mars", "Earth"]
+    #df.set_index('Parameter', inplace=True)
+    
+    
+    #mars_fact_dict = df.to_html()
+    
+
+
+    """
+    Mars Fact
+    """
+    # Mars Facts URL
+    url = r"https://galaxyfacts-mars.com/"
+    browser.visit(url)
+    tables = pd.read_html(url)
+    df = tables[1]
+    df.columns = ['Fact', 'Value']
+    df.set_index("Fact", inplace=True)
+   
+    html_table = df.to_html(table_id='scrape_table')
+    
+   
+    """
+    Mars Hemispheres
+    """
+    #Mars Hemispheres URL
+    url = "https://marshemispheres.com/"    
+    browser.visit(url)
+    time.sleep(2)    
+    
+    
+    img_url_list = []
+    title_list = []
+    hemi=2
+    count=1
+    x=0
+    
+    
+#    url = "https://galaxyfacts-mars.com/"
+    url = "https://galaxyfacts-mars.com/"    
+#    xpath = ('//*[@id="product-section"]/div[2]/div[' + str(hemi) +']/div/a/h3')
+   #X Path into the Four Hemisphere Images
+    xpath = ('//*[@id="publish"]/div[1]/div[1]/div[4]/div/a[' + str(hemi) +']/div/h3')    
+#              //*[@id="publish"]/div[1]/div[1]/div[4]/div/a[4]/div/h3
+#              //*[@id="publish"]/div[1]/div[1]/div[4]/div/a[6]/div/h3
+#              //*[@id="publish"]/div[1]/div[1]/div[4]/div/a[8]/div/h3
+    while count < 5:
+        browser.visit(url)
+
+        hemi_name = browser.find_by_xpath(xpath).text
+        title_list.append(hemi_name)
+        results = browser.find_by_xpath(xpath)
+
+        img = results[0]
+        img.click()
+        time.sleep(2)
+
+        # Scrape page into Soup
+        html = browser.html
+        soup = BeautifulSoup(html, "html.parser")
+        img_desc = soup.find('div', id="wide-image")
+        img_src = img_desc.find('div',class_='downloads')
+        image = img_src.find('a')
+        if image.has_attr('href'):
+            target_img = image.attrs['href']
+        img_url_list.append(target_img)
+
+        hemi+=2
+
+        xpath = ('//*[@id="publish"]/div[1]/div[1]/div[4]/div/a[' + str(hemi) +']/div/h3')  
+        count+=1
+        x+=1
+    
+    hemisphere_image_urls = []
+    h=0
+    for items in title_list:
+        if h < 4:
+            dict = {"title": title_list[h], "img_url": img_url_list[h]}
+            hemisphere_image_urls.append(dict)
+            h+=1
     
     
    
